@@ -1,0 +1,7 @@
+node_modules
+dist
+build
+.cache
+.tmp
+.git
+npm-debug.log
