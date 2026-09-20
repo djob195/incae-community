@@ -1,0 +1,15 @@
+{
+    "collectionName": "components_article_text_blocks",
+    "info": {
+        "displayName": "TextBlock",
+        "icon": "brush"
+    },
+    "options": {},
+    "attributes": {
+        "body": {
+            "type": "blocks",
+            "required": true
+        }
+    },
+    "config": {}
+}

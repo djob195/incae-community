@@ -1,0 +1,18 @@
+{
+    "collectionName": "components_article_references",
+    "info": {
+        "displayName": "Reference",
+        "icon": "link"
+    },
+    "options": {},
+    "attributes": {
+        "citation": {
+            "type": "text",
+            "required": true
+        },
+        "url": {
+            "type": "string"
+        }
+    },
+    "config": {}
+}

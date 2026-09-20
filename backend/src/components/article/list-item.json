@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_article_list_items",
+  "info": {
+    "displayName": "ListItem",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "config": {}
+}

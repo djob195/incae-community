@@ -1,0 +1,34 @@
+{
+    "collectionName": "components_article_image_blocks",
+    "info": {
+        "displayName": "ImageBlock",
+        "icon": "picture"
+    },
+    "options": {},
+    "attributes": {
+        "caption": {
+            "type": "string"
+        },
+        "altText": {
+            "type": "string"
+        },
+        "title": {
+            "type": "string",
+            "required": true
+        },
+        "reference": {
+            "type": "string",
+            "required": false
+        },
+        "image": {
+            "type": "media",
+            "multiple": false,
+            "required": true,
+            "allowedTypes": [
+                "images",
+                "files"
+            ]
+        }
+    },
+    "config": {}
+}
