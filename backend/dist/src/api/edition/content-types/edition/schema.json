@@ -1,0 +1,51 @@
+{
+    "kind": "collectionType",
+    "collectionName": "editions",
+    "info": {
+        "singularName": "edition",
+        "pluralName": "editions",
+        "displayName": "Edición"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "volume": {
+            "type": "integer",
+            "required": true,
+            "unique": true
+        },
+        "title": {
+            "type": "string",
+            "required": true
+        },
+        "slug": {
+            "type": "uid",
+            "targetField": "title",
+            "required": true
+        },
+        "startDate": {
+            "type": "date",
+            "required": true
+        },
+        "endDate": {
+            "type": "date",
+            "required": true
+        },
+        "cover": {
+            "type": "media",
+            "multiple": false,
+            "allowedTypes": [
+                "images",
+                "files"
+            ]
+        },
+        "posts": {
+            "type": "relation",
+            "relation": "oneToMany",
+            "target": "api::post.post",
+            "mappedBy": "edicion"
+        }
+    }
+}

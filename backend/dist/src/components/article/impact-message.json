@@ -1,0 +1,19 @@
+{
+    "collectionName": "components_article_impact_messages",
+    "info": {
+        "displayName": "ImpactMessage",
+        "icon": "layout"
+    },
+    "options": {},
+    "attributes": {
+        "quote": {
+            "type": "text",
+            "required": true
+        },
+        "author": {
+            "type": "string",
+            "required": true
+        }
+    },
+    "config": {}
+}
