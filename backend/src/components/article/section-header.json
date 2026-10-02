@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_article_section_headers",
+  "info": {
+    "displayName": "SectionHeader",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "index": {
+      "type": "integer",
+      "required": true
+    }
+  },
+  "config": {}
+}

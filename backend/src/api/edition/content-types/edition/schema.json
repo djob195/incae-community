@@ -40,6 +40,12 @@
         "images",
         "files"
       ]
+    },
+    "posts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::post.post",
+      "mappedBy": "edicion"
     }
   }
 }

@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend editorial INCAE
 
-## Getting Started
+Mockup integrado en el proyecto proporcionado: Next.js 16.3.3, React 19.2.8, TypeScript y Tailwind CSS 4. Se conservan package.json, package-lock.json, configuración y Dockerfile del proyecto original.
 
-First, run the development server:
+## Ejecutar
+
+Dentro de la carpeta `frontend`:
 
 ```bash
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run lint
+npm run build
+npm start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Estructura
 
-## Learn More
+- `app/page.tsx`: ruta principal que muestra el prototipo.
+- `app/layout.tsx`: idioma español, metadatos y fuentes locales.
+- `app/globals.css`: estilos editoriales, variables de marca, diseño móvil y estilos de impresión. Conserva la importación y disponibilidad de Tailwind 4.
+- `components/editorial-mockup.tsx`: interfaz e interacciones de demostración.
+- `lib/editorial-data.ts`: datos de ejemplo y tipos TypeScript.
+- `app/fonts/`: fuentes Merriweather, Source Sans 3 y Public Sans con sus licencias.
+- `public/port-reference.png`: fotografía recortada de la captura original.
 
-To learn more about Next.js, take a look at the following resources:
+## Guía visual
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Uso | Valor |
+| --- | --- |
+| Primario | #0F1F38 |
+| Secundario | #C85A32 |
+| Terciario | #B85D19 |
+| Neutro | #1A1A1A |
+| Títulos | Merriweather |
+| Texto | Source Sans 3 |
+| Etiquetas | Public Sans |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Las fuentes se sirven localmente mediante next/font/local; no requieren conexión a Google Fonts. La paleta queda disponible como variables CSS y colores de Tailwind (por ejemplo, `bg-primary`).
 
-## Deploy on Vercel
+## Acciones y datos
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Entrevistas: abren un diálogo con texto de ejemplo; se cierra con el botón, Escape o al pulsar el fondo.
+- Directorio: muestra una entrevista adicional.
+- Compartir: copia el enlace cuando el navegador permite usar el portapapeles.
+- Imprimir: usa la impresión del navegador con un diseño para el artículo.
+- Leer ensayo relacionado: navega a la página del artículo. Postular abre una vista de demostración y no envía datos.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+No necesita backend, cuentas ni variables de entorno para probarlo. No se añadió integración con el backend adjuntado por error.
+
+Algunos nombres y textos fueron recreados porque no se leen completamente en la captura. Los retratos usan iniciales. La fotografía es de baja resolución: reemplázala por el archivo original antes de publicar.
+
+## Integrar en tu copia
+
+Puedes usar esta carpeta completa o copiar únicamente `app/page.tsx`, `app/layout.tsx`, `app/globals.css`, `app/fonts/`, `components/`, `lib/` y `public/port-reference.png` a tu proyecto. Conserva tus archivos de entorno locales.
+
+## Validación
+
+Compilación de producción, TypeScript y ESLint verificados. El contenedor de verificación necesitó una adaptación temporal de su API de memoria, que no forma parte del proyecto entregado. La revisión visual en navegador y la ejecución de las interacciones quedaron pendientes: el navegador de prueba no estaba disponible.
+
+## Artículo de demostración
+
+La ruta `/articulos/escalamiento-corporativo` muestra el ensayo de las cuatro capturas. Se abre desde la nueva tarjeta de ensayo y desde el botón «Leer ensayo relacionado» en la portada. El enlace «Volver a la edición» regresa al inicio.
+
+- `app/articulos/escalamiento-corporativo/page.tsx`: contenido del artículo y figura de indicadores.
+- `components/article-tools.tsx`: controles de tamaño de texto, lectura con la voz del navegador, compartir, imprimir y guardar en el dossier durante la sesión de la página. El guardado se reinicia al salir o recargar.
+- `public/operaciones-reference.png` y `public/alejandro-reference.png`: recortes de las capturas proporcionadas.
+
+No es necesario configurar Strapi para navegar por el mockup. Los datos del ensayo provienen de las capturas, con aproximaciones en los detalles menos legibles.

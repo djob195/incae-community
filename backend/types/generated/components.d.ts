@@ -52,16 +52,14 @@ export interface ArticleReference extends Struct.ComponentSchema {
   };
 }
 
-export interface ArticleSection extends Struct.ComponentSchema {
-  collectionName: 'components_article_sections';
+export interface ArticleSectionHeader extends Struct.ComponentSchema {
+  collectionName: 'components_article_section_headers';
   info: {
-    displayName: 'Section';
-    icon: 'layout';
+    displayName: 'SectionHeader';
+    icon: 'bulletList';
   };
   attributes: {
-    index: Schema.Attribute.Integer &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique;
+    index: Schema.Attribute.Integer & Schema.Attribute.Required;
     title: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
@@ -84,7 +82,7 @@ declare module '@strapi/strapi' {
       'article.impact-message': ArticleImpactMessage;
       'article.list-item': ArticleListItem;
       'article.reference': ArticleReference;
-      'article.section': ArticleSection;
+      'article.section-header': ArticleSectionHeader;
       'article.text-block': ArticleTextBlock;
     }
   }
