@@ -3,26 +3,34 @@ services:
     image: postgres:16-alpine
     container_name: incae-postgres
     restart: unless-stopped
+
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
     ports:
       - "5432:5432"
 
   backend:
     build:
       context: ./backend
+
     container_name: incae-backend
     restart: unless-stopped
+
     depends_on:
       - postgres
+
     env_file:
       - ./backend/.env
+
     environment:
       NODE_ENV: development
+
       DATABASE_CLIENT: postgres
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
@@ -30,26 +38,43 @@ services:
       DATABASE_USERNAME: ${POSTGRES_USER}
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
       DATABASE_SSL: "false"
+
+      HOST: 0.0.0.0
+
     volumes:
       - ./backend:/app
       - backend_node_modules:/app/node_modules
+
     ports:
       - "1337:1337"
+
+    command: npm run develop
 
   frontend:
     build:
       context: ./frontend
+
     container_name: incae-frontend
     restart: unless-stopped
+
     depends_on:
       - backend
+
     environment:
+      STRAPI_INTERNAL_URL: http://backend:1337
       NEXT_PUBLIC_API_URL: http://localhost:1337
+
+      # Hot reload en Docker Desktop / Windows
+      WATCHPACK_POLLING: "true"
+
     volumes:
       - ./frontend:/app
       - frontend_node_modules:/app/node_modules
+
     ports:
       - "3000:3000"
+
+    command: npm run dev
 
 volumes:
   postgres_data:
