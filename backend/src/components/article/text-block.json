@@ -9,6 +9,11 @@
     "body": {
       "type": "blocks",
       "required": true
+    },
+    "dropCap": {
+      "type": "boolean",
+      "required": true,
+      "default": false
     }
   },
   "config": {}

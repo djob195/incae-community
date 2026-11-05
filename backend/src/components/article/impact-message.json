@@ -13,6 +13,9 @@
     "author": {
       "type": "string",
       "required": true
+    },
+    "affiliation": {
+      "type": "string"
     }
   },
   "config": {}

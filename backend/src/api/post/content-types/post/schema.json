@@ -49,7 +49,33 @@
       "components": [
         "article.impact-message",
         "article.image-block",
-        "article.text-block"
+        "article.text-block",
+        "article.list-block",
+        "article.section-header"
+      ]
+    },
+    "references": {
+      "type": "component",
+      "component": "article.reference",
+      "repeatable": true
+    },
+    "authors": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::author.author",
+      "mappedBy": "posts"
+    },
+    "isFeatured": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "heroImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files"
       ]
     }
   }

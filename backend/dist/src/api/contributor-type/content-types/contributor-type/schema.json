@@ -1,0 +1,30 @@
+{
+    "kind": "collectionType",
+    "collectionName": "contributor_types",
+    "info": {
+        "singularName": "contributor-type",
+        "pluralName": "contributor-types",
+        "displayName": "ContributorType"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "name": {
+            "type": "string",
+            "required": true,
+            "unique": true
+        },
+        "slug": {
+            "type": "uid",
+            "targetField": "name"
+        },
+        "authors": {
+            "type": "relation",
+            "relation": "oneToMany",
+            "target": "api::author.author",
+            "mappedBy": "contributorType"
+        }
+    }
+}

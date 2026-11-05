@@ -23,8 +23,20 @@ export interface ArticleImpactMessage extends Struct.ComponentSchema {
     icon: 'layout';
   };
   attributes: {
+    affiliation: Schema.Attribute.String;
     author: Schema.Attribute.String & Schema.Attribute.Required;
     quote: Schema.Attribute.Text & Schema.Attribute.Required;
+  };
+}
+
+export interface ArticleListBlock extends Struct.ComponentSchema {
+  collectionName: 'components_article_list_blocks';
+  info: {
+    displayName: 'ListBlock';
+    icon: 'bulletList';
+  };
+  attributes: {
+    items: Schema.Attribute.Component<'article.list-item', true>;
   };
 }
 
@@ -72,6 +84,9 @@ export interface ArticleTextBlock extends Struct.ComponentSchema {
   };
   attributes: {
     body: Schema.Attribute.Blocks & Schema.Attribute.Required;
+    dropCap: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<false>;
   };
 }
 
@@ -80,6 +95,7 @@ declare module '@strapi/strapi' {
     export interface ComponentSchemas {
       'article.image-block': ArticleImageBlock;
       'article.impact-message': ArticleImpactMessage;
+      'article.list-block': ArticleListBlock;
       'article.list-item': ArticleListItem;
       'article.reference': ArticleReference;
       'article.section-header': ArticleSectionHeader;
