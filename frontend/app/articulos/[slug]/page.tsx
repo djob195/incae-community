@@ -2,6 +2,8 @@ import { ArticleHeader } from "@/components/article/article-header";
 import { ArticleContent } from "@/components/article/article-content";
 import { ReferencesBlock } from "@/components/article/references-block";
 import { AuthorCard } from "@/components/article/author-card";
+import { SiteHeader } from "@/components/layout/site-header";
+import { SiteFooter } from "@/components/layout/site-footer";
 
 type PageProps = {
   params: Promise<{
@@ -208,14 +210,20 @@ export default async function ArticlePage({
 
   if (!post) {
     return (
-      <main className="article-container">
-        <h1>Artículo no encontrado</h1>
+      <>
+        <SiteHeader />
 
-        <p>
-          No existe un artículo con el slug:{" "}
-          <strong>{slug}</strong>
-        </p>
-      </main>
+        <main className="article-container">
+          <h1>Artículo no encontrado</h1>
+
+          <p>
+            No existe un artículo con el slug:{" "}
+            <strong>{slug}</strong>
+          </p>
+        </main>
+
+        <SiteFooter />
+      </>
     );
   }
 
@@ -294,76 +302,68 @@ export default async function ArticlePage({
 
   return (
     <>
-      <header className="site-header">
-        <div className="site-header__inner">
-          <a
-            href="/"
-            className="site-header__brand"
-            aria-label="America's Business Review"
-          >
-            <img
-              src="/abr-logo.png"
-              alt="America's Business Review"
-              className="site-header__logo"
-            />
-          </a>
+      <SiteHeader />
+
+      <main className="article-page">
+        <div className="article-container">
+
+          <ArticleHeader
+            editionLabel={editionLabel}
+            readingMinutes={
+              post.readingMinutes
+            }
+            title={post.title}
+            subtitle={post.subtitle}
+            summary={post.summary}
+          />
+
+          {authors.map((author) => {
+            const photoUrl =
+              author.photo?.url
+                ? author.photo.url.startsWith(
+                    "http"
+                  )
+                  ? author.photo.url
+                  : `${publicApiUrl}${author.photo.url}`
+                : undefined;
+
+            return (
+              <AuthorCard
+                key={author.id}
+                honorific={
+                  author.honorific
+                }
+                name={author.name}
+                headline={
+                  author.headline
+                }
+                bio={author.bio}
+                contributorType={
+                  author.contributorType
+                    ?.name
+                }
+                photoUrl={photoUrl}
+                linkedinUrl={
+                  author.linkedinUrl
+                }
+              />
+            );
+          })}
+
+          <ArticleContent
+            content={content}
+          />
+
+          <ReferencesBlock
+            references={
+              post.references ?? []
+            }
+          />
+
         </div>
-      </header>
-
-      <main className="article-container">
-        <ArticleHeader
-          editionLabel={editionLabel}
-          readingMinutes={
-            post.readingMinutes
-          }
-          title={post.title}
-          subtitle={post.subtitle}
-          summary={post.summary}
-        />
-
-        {authors.map((author) => {
-          const photoUrl =
-            author.photo?.url
-              ? author.photo.url.startsWith(
-                  "http"
-                )
-                ? author.photo.url
-                : `${publicApiUrl}${author.photo.url}`
-              : undefined;
-
-          return (
-            <AuthorCard
-              key={author.id}
-              honorific={
-                author.honorific
-              }
-              name={author.name}
-              headline={
-                author.headline
-              }
-              bio={author.bio}
-              contributorType={
-                author.contributorType
-                  ?.name
-              }
-              photoUrl={photoUrl}
-              linkedinUrl={
-                author.linkedinUrl
-              }
-            />
-          );
-        })}
-
-        <ArticleContent
-          content={content}
-        />
-
-        <ReferencesBlock
-          references={
-            post.references ?? []
-          }
-        />
       </main>
+
+      <SiteFooter />
     </>
   );
 }

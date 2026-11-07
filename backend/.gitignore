@@ -127,6 +127,8 @@ exports
 .strapi
 #dist
 build
+!dist/build/
+!dist/build/**
 .strapi-updater.json
 .strapi-cloud.json
 .ipynb_checkpoints/
