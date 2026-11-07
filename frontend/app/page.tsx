@@ -1,285 +1,193 @@
 import { FeaturedArticle } from "@/components/editorial/featured-article";
 import { ArticleCard } from "@/components/editorial/article-card";
-import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { SiteFooter } from "@/components/layout/site-footer";
+
+type Media = {
+  url?: string;
+};
+
+type ContributorType = {
+  name?: string;
+};
 
 type Author = {
-  id: number;
   honorific?: string;
   name: string;
-
-  photo?: {
-    url: string;
-  };
-
-  contributorType?: {
-    name: string;
-  };
+  photo?: Media | null;
+  contributorType?: ContributorType | null;
 };
 
 type Post = {
   id: number;
+  documentId?: string;
   title: string;
   subtitle?: string;
   slug: string;
   summary?: string;
   readingMinutes?: number;
   isFeatured?: boolean;
-
-  heroImage?: {
-    url: string;
-
-    formats?: {
-      large?: {
-        url: string;
-      };
-
-      medium?: {
-        url: string;
-      };
-
-      small?: {
-        url: string;
-      };
-    };
-  };
-
+  heroImage?: Media | null;
   authors?: Author[];
 };
 
-export default async function HomePage() {
-  const apiUrl = process.env.STRAPI_INTERNAL_URL;
+type StrapiResponse<T> = {
+  data: T;
+};
+
+function buildImageUrl(
+  image: Media | null | undefined,
+  publicApiUrl: string
+) {
+  if (!image?.url) return undefined;
+
+  if (image.url.startsWith("http")) {
+    return image.url;
+  }
+
+  return `${publicApiUrl}${image.url}`;
+}
+
+export default async function Home() {
+  const internalApiUrl = process.env.STRAPI_INTERNAL_URL;
   const publicApiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  if (!apiUrl || !publicApiUrl) {
-    throw new Error(
-      "Las URLs de Strapi no están configuradas."
-    );
+  if (!internalApiUrl || !publicApiUrl) {
+    throw new Error("Las URLs de Strapi no están configuradas.");
   }
 
-  /* =========================
-     QUERIES
-  ========================== */
+  /*
+   * =====================================================
+   * FEATURED ARTICLE
+   * =====================================================
+   */
 
-  const featuredQuery =
-    `filters[isFeatured][$eq]=true` +
-    `&populate=heroImage`;
+  const featuredQuery = [
+    "filters[isFeatured][$eq]=true",
+    "populate[heroImage]=true",
+    "populate[authors][populate][photo]=true",
+    "populate[authors][populate][contributorType]=true",
+    "pagination[pageSize]=1",
+  ].join("&");
 
-  const latestQuery =
-    `filters[isFeatured][$ne]=true` +
-    `&sort=publishedAt:desc` +
-    `&pagination[pageSize]=6` +
-    `&populate[heroImage]=true` +
-    `&populate[authors][populate][photo]=true` +
-    `&populate[authors][populate][contributorType]=true`;
+  const featuredResponse = await fetch(
+    `${internalApiUrl}/api/posts?${featuredQuery}`,
+    {
+      cache: "no-store",
+    }
+  );
 
-  /* =========================
-     FETCH
-  ========================== */
+  const featuredResult: StrapiResponse<Post[]> =
+    featuredResponse.ok
+      ? await featuredResponse.json()
+      : { data: [] };
 
-  const [
-    featuredResponse,
-    latestResponse,
-  ] = await Promise.all([
-    fetch(
-      `${apiUrl}/api/posts?${featuredQuery}`,
-      {
-        cache: "no-store",
-      }
-    ),
+  const featuredPost = featuredResult.data?.[0];
 
-    fetch(
-      `${apiUrl}/api/posts?${latestQuery}`,
-      {
-        cache: "no-store",
-      }
-    ),
-  ]);
+  /*
+   * =====================================================
+   * LATEST ARTICLES
+   *
+   * Solo mostramos 3 en home para mantener
+   * la composición editorial del mockup.
+   * =====================================================
+   */
 
-  /* =========================
-     ERROR HANDLING
-  ========================== */
+  const latestQuery = [
+    "filters[isFeatured][$eq]=false",
+    "sort=publishedAt:desc",
+    "pagination[pageSize]=3",
+    "populate[heroImage]=true",
+    "populate[authors][populate][photo]=true",
+    "populate[authors][populate][contributorType]=true",
+  ].join("&");
 
-  if (!featuredResponse.ok) {
-    const errorText =
-      await featuredResponse.text();
+  const latestResponse = await fetch(
+    `${internalApiUrl}/api/posts?${latestQuery}`,
+    {
+      cache: "no-store",
+    }
+  );
 
-    console.error(
-      "Featured post status:",
-      featuredResponse.status
-    );
+  const latestResult: StrapiResponse<Post[]> =
+    latestResponse.ok
+      ? await latestResponse.json()
+      : { data: [] };
 
-    console.error(
-      "Featured post response:",
-      errorText
-    );
-
-    throw new Error(
-      `No se pudo cargar el artículo destacado. Strapi respondió ${featuredResponse.status}`
-    );
-  }
-
-  if (!latestResponse.ok) {
-    const errorText =
-      await latestResponse.text();
-
-    console.error(
-      "Latest posts status:",
-      latestResponse.status
-    );
-
-    console.error(
-      "Latest posts response:",
-      errorText
-    );
-
-    throw new Error(
-      `No se pudieron cargar los artículos recientes. Strapi respondió ${latestResponse.status}`
-    );
-  }
-
-  /* =========================
-     DATA
-  ========================== */
-
-  const featuredResult =
-    await featuredResponse.json();
-
-  const latestResult =
-    await latestResponse.json();
-
-  const featuredPost: Post | undefined =
-    featuredResult.data?.[0];
-
-  const latestPosts: Post[] =
-    latestResult.data ?? [];
-
-  /* =========================
-     HELPERS
-  ========================== */
-
-  function getMediaUrl(
-    path?: string
-  ): string | undefined {
-    if (!path) return undefined;
-
-    return path.startsWith("http")
-      ? path
-      : `${publicApiUrl}${path}`;
-  }
-
-  function getHeroImageUrl(
-    post: Post
-  ): string | undefined {
-    const imagePath =
-      post.heroImage?.formats?.large?.url ??
-      post.heroImage?.formats?.medium?.url ??
-      post.heroImage?.url;
-
-    return getMediaUrl(imagePath);
-  }
-
-  /* =========================
-     RENDER
-  ========================== */
+  const latestPosts = latestResult.data ?? [];
 
   return (
     <>
-    <SiteHeader />
+      <SiteHeader />
+
       <main>
-        {featuredPost ? (
+        {featuredPost && (
           <FeaturedArticle
             slug={featuredPost.slug}
             title={featuredPost.title}
-            subtitle={
-              featuredPost.subtitle
-            }
-            summary={
-              featuredPost.summary
-            }
-            readingMinutes={
-              featuredPost.readingMinutes
-            }
-            imageUrl={
-              getHeroImageUrl(
-                featuredPost
-              )
-            }
-            editionLabel="Historia de portada"
+            subtitle={featuredPost.subtitle}
+            summary={featuredPost.summary}
+            readingMinutes={featuredPost.readingMinutes}
+            imageUrl={buildImageUrl(
+              featuredPost.heroImage,
+              publicApiUrl
+            )}
           />
-        ) : null}
+        )}
 
         <section className="latest-articles">
           <div className="container">
-            <header className="latest-articles__header">
-              <span className="latest-articles__eyebrow">
-                Actualidad editorial
-              </span>
-
+            <div className="latest-articles__header">
               <h2 className="latest-articles__title">
                 Lo más reciente
               </h2>
-            </header>
+            </div>
 
             {latestPosts.length > 0 ? (
               <div className="latest-articles__grid">
-                {latestPosts.map(
-                  (post) => {
-                    const author =
-                      post.authors?.[0];
+                {latestPosts.map((post) => {
+                  const author = post.authors?.[0];
 
-                    const authorPhotoUrl =
-                      getMediaUrl(
-                        author?.photo?.url
-                      );
-
-                    return (
-                      <ArticleCard
-                        key={post.id}
-                        slug={post.slug}
-                        title={post.title}
-                        summary={
-                          post.summary
-                        }
-                        readingMinutes={
-                          post.readingMinutes
-                        }
-                        category="Estrategia"
-                        imageUrl={
-                          getHeroImageUrl(
-                            post
-                          )
-                        }
-                        author={
-                          author
-                            ? {
-                                honorific:
-                                  author.honorific,
-                                name:
-                                  author.name,
-                                contributorType:
-                                  author
-                                    .contributorType
-                                    ?.name,
-                                photoUrl:
-                                  authorPhotoUrl,
-                              }
-                            : undefined
-                        }
-                      />
-                    );
-                  }
-                )}
+                  return (
+                    <ArticleCard
+                      key={post.documentId ?? post.id}
+                      slug={post.slug}
+                      title={post.title}
+                      summary={post.summary}
+                      readingMinutes={post.readingMinutes}
+                      category="Estrategia"
+                      imageUrl={buildImageUrl(
+                        post.heroImage,
+                        publicApiUrl
+                      )}
+                      author={
+                        author
+                          ? {
+                              honorific: author.honorific,
+                              name: author.name,
+                              contributorType:
+                                author.contributorType?.name,
+                              photoUrl: buildImageUrl(
+                                author.photo,
+                                publicApiUrl
+                              ),
+                            }
+                          : undefined
+                      }
+                    />
+                  );
+                })}
               </div>
             ) : (
               <p className="latest-articles__empty">
-                Todavía no hay artículos recientes.
+                No hay artículos disponibles todavía.
               </p>
             )}
           </div>
         </section>
-        <SiteFooter />
       </main>
-      </>
+
+      <SiteFooter />
+    </>
   );
 }

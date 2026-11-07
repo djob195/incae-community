@@ -21,11 +21,9 @@ export function FeaturedArticle({
     <section className="featured-article">
       <div className="featured-article__content">
         <div className="featured-article__meta">
-          {editionLabel ? (
-            <span className="featured-article__edition">
-              {editionLabel}
-            </span>
-          ) : null}
+          <span className="featured-article__edition">
+            Historia de portada · Edición 48
+          </span>
 
           {readingMinutes ? (
             <span className="featured-article__reading">
